@@ -3,7 +3,7 @@ import tkinter.font as tfont
 import sqlite3
 import random
 from datetime import datetime
-import re
+from re import match, search, compile
 t = Tk()
 t.geometry("500x500")
 t.resizable(0, 0)
@@ -76,13 +76,6 @@ def Login():
 
     e2 = Entry(f1, font=("Impact", 10), show="*", textvariable=b)
     e2.place(x=260, y=190, width=120)
-
-    # Label and Entry for the user's password
-    # u8 = Label(f1, text="Phone number: ", fg="white", bg="blue")
-    # u8.place(x=90, y=220)
-
-    # e6 = Entry(f1, font=("Impact", 10), textvariable=c)
-    # e6.place(x=260, y=220, width=120)
 
     # Button to trigger the registration process
     b3 = Button(f1, text="Login", command=loginVarification)
@@ -197,29 +190,26 @@ def data_i_CreateAccTab():
     baa = ba.get()
     att = at.get()
     
-    # email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    # ma = re.match(email_pattern, Emm)
-    # phone_pattern = r'^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$'
-    # matp = re.match(phone_pattern, phh)
-    # dob_pattern = r'^\d{4}-\d{2}-\d{2}$'
-    # matdob = re.match(dob_pattern, daa)
-    # if bool(ma):
-    #     if bool(matp):
-    #         if bool(matdob):
-    #             try:
-    #                 int(baa)
-    #                 AccountNoVarification(fnn, lnn, Emm, phh, daa, baa, att, current_date)
-    #             except:
-    #                 print("enter a numbers only!")
-    #         else:
-    #             print("invalid date of birth!")
-    #     else:
-    #         print("invalid phone number!")
-    # else:
-    #     print("invalid email! ")
-
-    AccountNoVarification(fnn, lnn, Emm, phh, daa, baa, att, current_date)
-
+    email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    ma = match(email_pattern, Emm)
+    phone_pattern = r'^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$'
+    matp = match(phone_pattern, phh)
+    dob_pattern = r'^\d{4}-\d{2}-\d{2}$'
+    matdob = match(dob_pattern, daa)
+    if bool(ma):
+        if bool(matp):
+            if bool(matdob):
+                try:
+                    int(baa)
+                    AccountNoVarification(fnn, lnn, Emm, phh, daa, baa, att, current_date)
+                except:
+                    print("enter a numbers only!")
+            else:
+                print("invalid date of birth!")
+        else:
+            print("invalid phone number!")
+    else:
+        print("invalid email! ")
 
 def loginVarification():
     lem = a.get()
@@ -244,12 +234,6 @@ def loginVarification():
 
                 if lem == fetched_email:
                     if lpa == fetched_password:
-                        # Print or store the values in program variables
-                        # print(f"S.No: {s_no}")
-                        # print(f"Email: {fetched_email}")
-                        # print(f"Password: {fetched_password}")
-                        # print(f"Phone Number: {fetched_PhoneNo}")
-
                         f3 = Frame(bg="blue")
                         f3.place(x=0, y=0, width=500, height=500)
 
@@ -329,11 +313,9 @@ def historyyw():
                 select_query = f"SELECT * FROM Historyy where accountN = {thh}"
                 cursor.execute(select_query)
                 all_details = cursor.fetchall()
-                # print(all_details)
 
                 data = all_details
 
-                # Header
                 header = ["sNo", "paid_to", "amount", "received_from", "amount", "date      ", "account"]
                 formatted_data = [header]
 
@@ -351,7 +333,6 @@ def historyyw():
                  print("Account number does not exist, check!!!")
 
             finally:
-                # Close the cursor and connection
                 cursor.close()
                 connection.close()
         get_data_his()
@@ -507,9 +488,6 @@ def transferw():
         print(f"Enter numbers only")
 
     finally:
-        # Close the cursor and connection
-        # cursor.close()
-        # connection.close()
         pass
 
 
@@ -596,9 +574,6 @@ def withdraww():
         print(f"account number not exist!!!")
 
     finally:
-        # Close the cursor and connection
-        # cursor.close()
-        # connection.close()
         pass
 
 def deposit():
@@ -677,9 +652,6 @@ def depositw():
         print("Enter numbers only!!")
 
     finally:
-        # Close the cursor and connection
-        # cursor.close()
-        # connection.close()
         pass
 
 def signin():
@@ -730,51 +702,42 @@ def SigninRegistration():
                 rf = f.get()
 
                 def insert_data(email, password, PhoneNumber):
-                      try:
-                           # Connect to the SQLite database
-                           connection = sqlite3.connect('bank.db')
-                           cursor = connection.cursor()
+                    try:
+                        # Connect to the SQLite database
+                        connection = sqlite3.connect('bank.db')
+                        cursor = connection.cursor()
 
-                           # Insert data into the 'Login' table
-                           insert_query = f"INSERT INTO Login (Email, pass, Phone) VALUES ('{email}', '{password}', {PhoneNumber})"
-                           cursor.execute(insert_query)
+                        # Insert data into the 'Login' table
+                        insert_query = f"INSERT INTO Login (Email, pass, Phone) VALUES ('{email}', '{password}', {PhoneNumber})"
+                        cursor.execute(insert_query)
 
-                           # Commit the changes
-                           connection.commit()
-                           print("Data inserted successfully")
-                           cursor.close()
-                           connection.close()
+                        # Commit the changes
+                        connection.commit()
+                        print("Data inserted successfully")
+                        cursor.close()
+                        connection.close()
 
-                      except Exception as l:
-                            print(f"Error: {l}")
-                      finally:
-                            # Close the cursor and connection
-                            # cursor.close()
-                            # connection.close()
-                            pass
+                    except Exception as l:
+                        print(f"Error: {l}")
+                    finally:
+                        pass
 
-                    # Example usage:
+                    email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+                    phone_pattern = r"^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$"
 
-      
-    
-                    #  email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-                    #  phone_pattern = r'^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$'
-
-                    #  pattern = re.compile(email_pattern)
-                    #  pattern = re.compile(phone_pattern)
-                    #  ma = pattern.search(rd)
-                    #  matchp = pattern.search(rf)
+                    ma = match(email_pattern, rd)
+                    matchp = match(phone_pattern, rf)
                     
-                    #  k = bool(ma)
-                    #  r = bool(matchp)
-                    #  if k:
-                    #       if r:
-                    #             insert_data(rd, re, rf)
-                    #       else:
-                    #             print("enter valid phone number!")
-                    #  else:
-                    #       print("invalid Email!")
-                insert_data(rd, re, rf)
+                    k = bool(ma)
+                    r = bool(matchp)
+                    if k:
+                          if r:
+                                insert_data(rd, re, rf)
+                          else:
+                                print("enter valid phone number!")
+                    else:
+                          print("invalid Email!")
+                
             except Exception as e:
                 print(f"Enter valid phone Number! {e}")
         except Exception as e:
