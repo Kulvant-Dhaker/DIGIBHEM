@@ -1,7 +1,7 @@
-tkinter
-tkinter.font 
+tkinter 
 sqlite3
 random
 datetime 
 re 
 tkcalendar
+python
