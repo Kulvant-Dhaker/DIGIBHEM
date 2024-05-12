@@ -4,6 +4,7 @@ import sqlite3
 import random
 from datetime import datetime
 from re import match, search, compile
+from tkcalendar import DateEntry
 t = Tk()
 t.geometry("500x500")
 t.resizable(0, 0)
@@ -11,27 +12,35 @@ fontStyle = tfont.Font(family="Impact", size=15)
 
 a = StringVar()
 b = StringVar()
-c = DoubleVar()
+c = IntVar()
 d = StringVar()
 x = StringVar()
-f = DoubleVar()
+f = IntVar()
 fn = StringVar()
 ln = StringVar()
 Em = StringVar()
-ph = DoubleVar()
+ph = IntVar()
 da = StringVar()
-ba = DoubleVar()
+ba = IntVar()
 at = StringVar()
-dan = DoubleVar()
-dam = DoubleVar()
-wan = DoubleVar()
-wam = DoubleVar()
-san = DoubleVar()
-ram = DoubleVar()
-tam = DoubleVar()
+dan = IntVar()
+dam = IntVar()
+wan = IntVar()
+wam = IntVar()
+san = IntVar()
+ram = IntVar()
+tam = IntVar()
 tif = StringVar()
-cb = DoubleVar()
-th = DoubleVar()
+cb = IntVar()
+th = IntVar()
+
+kr = 1
+global_function = None
+global_function2 = None
+global_function3 = None
+global_function4 = None
+global_function5 = None
+global_function6 = None
 
 def home():
     f0 = Frame(bg="blue")
@@ -46,7 +55,7 @@ def home():
     b0.place(x=130, y=80, width=100, height=30)
 
     # Creating a "Sign In" button that, when clicked, will call the signin function
-    b1 = Button(f0, text="Sign In Here", command=signin)
+    b1 = Button(f0, text="Register Here", command=signin)
     b1.place(x=260, y=80, width=100, height=30)
 
 
@@ -77,9 +86,22 @@ def Login():
     e2 = Entry(f1, font=("Impact", 10), show="*", textvariable=b)
     e2.place(x=260, y=190, width=120)
 
-    # Button to trigger the registration process
     b3 = Button(f1, text="Login", command=loginVarification)
     b3.place(x=175, y=250, width=100, height=30)
+    
+    
+    u26 = Label(f1, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f1, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 def createAccount():
     f4 = Frame(bg="blue")
@@ -119,8 +141,10 @@ def createAccount():
     u20 = Label(f4, text="Date of Birth(YYYY-MM-DD):", fg="white", bg="blue")
     u20.place(x=90, y=290)
 
-    e5 = Entry(f4, font=("Impact", 10), textvariable=da)
+    e5 = DateEntry(f4, font=("Impact", 10), textvariable=da, date_pattern='yyyy-mm-dd')
     e5.place(x=260, y=290, width=120)
+
+
 
     u21 = Label(f4, text="Balance:", fg="white", bg="blue")
     u21.place(x=90, y=320)
@@ -128,18 +152,31 @@ def createAccount():
     e6 = Entry(f4, font=("Impact", 10), textvariable=ba)
     e6.place(x=260, y=320, width=120)
 
-    u22 = Label(f4, text="Account Type:", fg="white", bg="blue")
+    u22 = Label(f4, text="Account Type:(saving, current)", fg="white", bg="blue")
     u22.place(x=90, y=360)
 
     e7 = Entry(f4, font=("Impact", 10), textvariable=at)
     e7.place(x=260, y=360, width=120)
 
     b3 = Button(f4, text="create", command=data_i_CreateAccTab)
-    b3.place(x=175, y=450, width=100, height=30)
+    b3.place(x=175, y=400, width=100, height=30)
+
+
+
 
     u26 = Label(f4, text=" ", fg="white", bg="blue")
-    u26.place(x=90, y=520)
+    u26.place(x=90, y=450)
 
+    u26 = Label(f4, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
+    
 
 def data_i_CreateAccTab():
     un = []
@@ -173,43 +210,59 @@ def data_i_CreateAccTab():
             connection.commit()
             print("account sucessfully created...")
             print(f"your account number is : {n}")
+            global_function("Account successfully created. Your account number is: {}".format(n), color="white")
         except Exception as e:
             print(f"Error: {e}")
+            global_function("Error: {}".format(e), color="red")
 
         finally:
             # Close the cursor and connection
             cursor.close()
             connection.close()
     current_date = datetime.now().date()
-
-    fnn = fn.get()
-    lnn = ln.get()
-    Emm = Em.get()
-    phh = ph.get()
-    daa = da.get()
-    baa = ba.get()
-    att = at.get()
+    try:
+        fnn = fn.get()
+        lnn = ln.get()
+        Emm = Em.get()
+        phh = ph.get()
+        daa = da.get()
+        baa = ba.get()
+        att = at.get()
+        phh = int(phh)
+        phh = str(phh)
+        daa = str(daa)
     
-    email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    ma = match(email_pattern, Emm)
-    phone_pattern = r'^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$'
-    matp = match(phone_pattern, phh)
-    dob_pattern = r'^\d{4}-\d{2}-\d{2}$'
-    matdob = match(dob_pattern, daa)
-    if bool(ma):
-        if bool(matp):
-            if bool(matdob):
-                try:
-                    int(baa)
-                    AccountNoVarification(fnn, lnn, Emm, phh, daa, baa, att, current_date)
-                except:
-                    print("enter a numbers only!")
+        email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        ma = match(email_pattern, Emm)
+        phone_pattern = r'^(\+91-?)?([6-9]\d{9})$'
+        matp = match(phone_pattern, phh)
+        dob_pattern = r'^(?!0000)(?:(?!02-(30|31))\d{4}-(0[13-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])|(?!02-29)\d{4}-02-(0[1-9]|1[0-9]|2[0-8])|(?!02-(30|31))\d{4}-02-29)$'
+        matdob = match(dob_pattern, daa) and daa <= str(current_date)
+        if bool(ma):
+            if bool(matp):
+                if bool(matdob):
+                    try:
+                        if att in ['saving', 'current']:
+                            AccountNoVarification(fnn, lnn, Emm, phh, daa, baa, att, current_date)
+                        else:
+                            global_function("inter valid account type!", color='red')
+                    except:
+                        print("enter a numbers only!")
+                        global_function("enter a numbers only!", color="red")
+                else:
+                    print("invalid date of birth!")
+                    global_function("invalid date of birth!", color="red")
             else:
-                print("invalid date of birth!")
+                print("invalid phone number!")
+                global_function("invalid phone number!", color="red")
         else:
-            print("invalid phone number!")
-    else:
-        print("invalid email! ")
+            print("invalid email! ")
+            global_function("invalid email! ", color="red")
+
+        
+    except:
+        print("Something is Wrong!!!")
+        global_function("Something is Wrong!!!", color="red")
 
 def loginVarification():
     lem = a.get()
@@ -234,6 +287,7 @@ def loginVarification():
 
                 if lem == fetched_email:
                     if lpa == fetched_password:
+                    
                         f3 = Frame(bg="blue")
                         f3.place(x=0, y=0, width=500, height=500)
 
@@ -265,11 +319,14 @@ def loginVarification():
 
                     else:
                         print("Wrong Password!")
+                        global_function("Wrong Password!", color='red')
             else:
                 print("Wrong email!:")
+                global_function("Wrong email!:", color='red')
 
         except Exception as e:
             print(f"Error: {e}")
+            global_function("Error: {}".format(e), color='red')
 
         finally:
             # Close the cursor and connection
@@ -283,7 +340,7 @@ def history():
     f9 = Frame(bg="blue")
     f9.place(x=0, y=0, width=500, height=500)
 
-    # Label for the welcome back message
+    
     u21 = Label(f9, text="Transaction History....＼(((￣(￣(￣▽￣)￣)￣)))／", fg="white", bg="blue", font=fontStyle)
     u21.place(x=70, y=80)
 
@@ -298,6 +355,67 @@ def history():
 
     b7 = Button(f9, text="Check", command=historyyw)
     b7.place(x=190, y=200, width=110, height=40)
+    
+    u26 = Label(f9, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=300)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
+    
+    
+   
+    u27 = Label(f9, text="", fg="white", bg="blue")
+    u27.place(x=90, y=330)
+    
+    def set_message(message, color="red"):
+        u27.config(text=message, fg=color)
+        
+    global global_function2
+    global_function2 = set_message
+    
+    #
+    u28 = Label(f9, text="", fg="white", bg="blue")
+    u28.place(x=90, y=360)
+    
+    def set_message(message, color="red"):
+        u28.config(text=message, fg=color)
+        
+    global global_function3
+    global_function3 = set_message
+    
+    #
+    u29 = Label(f9, text="", fg="white", bg="blue")
+    u29.place(x=90, y=400)
+    
+    def set_message(message, color="red"):
+        u29.config(text=message, fg=color)
+        
+    global global_function4
+    global_function4 = set_message
+    
+    #
+    u30 = Label(f9, text="", fg="white", bg="blue")
+    u30.place(x=90, y=430)
+    
+    def set_message(message, color="red"):
+        u30.config(text=message, fg=color)
+        
+    global global_function5
+    global_function5 = set_message
+    
+    #
+    u31 = Label(f9, text="", fg="white", bg="blue")
+    u31.place(x=90, y=450)
+    
+    def set_message(message, color="red"):
+        u31.config(text=message, fg=color)
+        
+    global global_function6
+    global_function6 = set_message
 
 def historyyw():
     try:
@@ -306,38 +424,71 @@ def historyyw():
         def get_data_his():
             try:
 
-                # Connect to the SQLite database
+                
                 connection = sqlite3.connect('bank.db')
                 cursor = connection.cursor()
 
                 select_query = f"SELECT * FROM Historyy where accountN = {thh}"
                 cursor.execute(select_query)
                 all_details = cursor.fetchall()
+                # print(all_details)
 
                 data = all_details
 
-                header = ["sNo", "paid_to", "amount", "received_from", "amount", "date      ", "account"]
-                formatted_data = [header]
+                # Header
+                header = ["sNo", "paid_to", "amount", "received_from", "amount", "date ", "account"]
+                formatted_data = []    # [header]
 
                 # Add data rows
                 for row in data:
                     formatted_data.append(list(row))
-
-                # Print the formatted data
+                global_function("|sNo.| paid_to | Amount | Rec_from | Amount | Date | Account |", color='white')
+                
+                formatted_data.reverse()
                 for row in formatted_data:
-                     print(", ".join(map(str, row)))
-
-
+                    l = []
+                    # print([", ".join(map(str, row))])
+                    l.append([", ".join(map(str, row))])
+                ls = len(formatted_data)                   
+                print(ls)
+                def case1():
+                    global_function2(str(["----".join(map(str, formatted_data[0]))]), color='white')
+                def case2():
+                    global_function3(str(["----".join(map(str, formatted_data[1]))]), color='white')
+                def case3():
+                    global_function4(str(["----".join(map(str, formatted_data[2]))]), color='white')
+                def case4():
+                    global_function5(str(["----".join(map(str, formatted_data[3]))]), color='white')
+                def default_case():
+                    global_function6(str(["----".join(map(str, formatted_data[4]))]), color='white')
+                switch = {1:case1, 2:case2, 3:case3, 4:case4}
+                def execute_case(case):
+                    switch.get(case, default_case)()
+                if ls ==0:
+                    print("History not available")   
+                    global_function("History not available!!!", color='red') 
+                elif ls == 1:
+                    execute_case(1)    
+                elif ls < 5:  
+                    for u in range(1,ls+1):
+                        execute_case(u)
+                else:
+                    for i in range(1,6):
+                        execute_case(i)
+                   
             except Exception as e:
                  print(f"Error: {e}")
                  print("Account number does not exist, check!!!")
+                 global_function("History not available, check!!!", color='red')
 
             finally:
+                # Close the cursor and connection
                 cursor.close()
                 connection.close()
         get_data_his()
     except Exception as e:
-        print("Enter only numbers!!!")
+        print("Account number not exist!!!")
+        global_function("Account number not exist!!!", color='red')
 
 
 def checkB():
@@ -359,6 +510,19 @@ def checkB():
 
     b7 = Button(f8, text="Check", command=checkb)
     b7.place(x=190, y=200, width=110, height=40)
+    
+    u26 = Label(f8, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f8, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 def checkb():
     try:
@@ -379,10 +543,13 @@ def checkb():
              flat_b = (all_Balance[0])
              int(flat_b)
              print(flat_b)
+             global_function("Balance is : {}".format(flat_b), color='white')
         else:
              print("Account Number does not exist!")
+             global_function("Account Number does not exist!", color='red')
     except Exception as e:
-        print(f"Enter numbers only!!!")
+        print(f"Account number not exist!!!")
+        global_function("Account number not exist!!!", color='red')
 
 def transfer():
     f7 = Frame(bg="blue")
@@ -421,6 +588,19 @@ def transfer():
 
     b7 = Button(f7, text="Transfer", command=transferw)
     b7.place(x=190, y=350, width=110, height=40)
+    
+    u26 = Label(f7, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f7, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 def transferw():
     try:
@@ -451,43 +631,57 @@ def transferw():
             flat_b = (all_Balance[0])
             int(flat_b)
             if dk in flat_list:
-                if flat_b > tamm:
-                    if kd in flat_list:
-                        select_queryyy = f"SELECT Balance FROM create_account where AccountNo = {ramm}"
-                        cursor.execute(select_queryyy)
-                        t_Balance = cursor.fetchone()
-                        flat_tb = (t_Balance[0])
-                        int(flat_tb)
-                        tubalance = flat_tb+tamm
-                        cursor.execute(f"UPDATE create_account SET Balance = {tubalance} WHERE AccountNo = {ramm}")
-                        connection.commit()
-                        cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({dk}, {0}, {kd}, {tm}, '{current_date}', {kd})")
-                        connection.commit()
-                    newBalance = int(flat_b - tamm)
-                    print(newBalance)
-                    def insert_data_tTable(sa, oa, ba, am, da, ifs):
-                        insert_query = f"INSERT INTO Transfer (sAccountN, oAccountN, Balancee, amount, date, ifsc_code) VALUES({sa}, {oa}, {ba}, {am}, '{da}', '{ifs}')"
-                        cursor.execute(insert_query)
-                        connection.commit()
-                        cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({sa}, {am}, {oa}, {0}, '{da}', {sa})")
-                        connection.commit()
-                        print("Data inserted successfully")
-                        cursor.execute(f"UPDATE create_account SET Balance = {newBalance} WHERE AccountNo = {sann}")
-                        connection.commit()
-
-                    insert_data_tTable(sann, ramm, newBalance, tamm, current_date, tiff)
-                    cursor.close()
-                    connection.close()
+                if sann != ramm:
+                    if flat_b > tamm:
+                        if kd in flat_list:
+                            select_queryyy = f"SELECT Balance FROM create_account where AccountNo = {ramm}"
+                            cursor.execute(select_queryyy)
+                            t_Balance = cursor.fetchone()
+                            flat_tb = (t_Balance[0])
+                            int(flat_tb)
+                            
+                            tubalance = flat_tb+tamm
+                            
+                            cursor.execute(f"UPDATE create_account SET Balance = {tubalance} WHERE AccountNo = {ramm}")
+                            connection.commit()
+                            cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({dk}, {0}, {kd}, {tm}, '{current_date}', {kd})")
+                            connection.commit()
+                        newBalance = int(flat_b - tamm)
+                        print(newBalance)
+                        def insert_data_tTable(sa, oa, ba, am, da, ifs):
+                            insert_query = f"INSERT INTO Transfer (sAccountN, oAccountN, Balancee, amount, date, ifsc_code) VALUES({sa}, {oa}, {ba}, {am}, '{da}', '{ifs}')"
+                            cursor.execute(insert_query)
+                            connection.commit()
+                            cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({sa}, {am}, {oa}, {0}, '{da}', {sa})")
+                            connection.commit()
+                            print("Data inserted successfully")
+                            global_function("Transfered successfully...", color='white')
+                            cursor.execute(f"UPDATE create_account SET Balance = {newBalance} WHERE AccountNo = {sann}")
+                            connection.commit()
+                        
+                        insert_data_tTable(sann, ramm, newBalance, tamm, current_date, tiff)
+                        cursor.close()
+                        connection.close()
+                    else:
+                        print("insufficient balance!")
+                        global_function("insufficient balance!", color='red')
                 else:
-                    print("insufficient balance!")
+                    print("Both account number cann't be same!")
+                    global_function("Both account number cann't be same!", color='red')
             else:
                 print("account number not exist")
+                global_function("account number not exist", color='red')
         except:
-            print("enter numbers only!")   
+            print("enter numbers only!") 
+            global_function("account number not exist!", color='red')  
     except Exception as e:
         print(f"Enter numbers only")
+        global_function("account number not exist", color='red')
 
     finally:
+        # Close the cursor and connection
+        # cursor.close()
+        # connection.close()
         pass
 
 
@@ -516,6 +710,19 @@ def withdraw():
 
     b7 = Button(f6, text="Debit", command=withdraww)
     b7.place(x=190, y=250, width=110, height=40)
+    
+    u26 = Label(f6, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f6, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 def withdraww():
     try:
@@ -554,6 +761,7 @@ def withdraww():
                         cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({acc}, {cred}, {acc}, {0}, '{datee}', {acc})")
                         connection.commit()
                         print("Data inserted successfully")
+                        global_function("Success ^_-", color='white')
                         cursor.execute(f"UPDATE create_account SET Balance = {newBalance} WHERE AccountNo = {dk}")
                         connection.commit()
 
@@ -562,18 +770,27 @@ def withdraww():
                     connection.close()
                 else:
                     print("insufficient balance!")
+                    global_function("insufficient balance!", color='red')
             else:
                 print("account number not exist")
+                global_function("account number not exist", color='red')
         except UnboundLocalError:
             print("enter numbers only!")
+            global_function("account number not exist!", color='red')
         except Exception as e:
             print(f"Enter numbers only!")
+            global_function("account number not exist!", color='red')
     except UnboundLocalError:
         print("account number not exist!!!")
+        global_function("account number not exist!!!", color='red')
     except Exception as e:
         print(f"account number not exist!!!")
+        global_function("account number not exist!!!", color='red')
 
     finally:
+        # Close the cursor and connection
+        # cursor.close()
+        # connection.close()
         pass
 
 def deposit():
@@ -601,6 +818,19 @@ def deposit():
 
     b7 = Button(f5, text="credit", command=depositw)
     b7.place(x=190, y=250, width=110, height=40)
+    
+    u26 = Label(f5, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f5, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 def depositw():
     try:
@@ -636,6 +866,7 @@ def depositw():
                     cursor.execute(f"INSERT INTO Historyy (Paid_to, amountt, Received_from, amount, date, accountN) VALUES({acc}, {0}, {acc}, {cred}, '{datee}', {acc})")
                     connection.commit()
                     print("Data inserted successfully")
+                    global_function("Success ^_~", color='white')
                     cursor.execute(f"UPDATE create_account SET Balance = {newBalance} WHERE AccountNo = {dk}")
                     connection.commit()
 
@@ -644,14 +875,21 @@ def depositw():
                 connection.close()
             else:
                 print("account number not exist")
+                global_function("account number not exist", color='red')
         except:
             print("account number not exist!")
+            global_function("account number not exist", color='red')
     except UnboundLocalError:
         print("enter numbers only!")
+        global_function("enter numbers only!", color='red')
     except Exception as e:
         print("Enter numbers only!!")
+        global_function("enter numbers only!", color='red')
 
     finally:
+        # Close the cursor and connection
+        # cursor.close()
+        # connection.close()
         pass
 
 def signin():
@@ -689,62 +927,83 @@ def signin():
     b4.place(x=0, y=0, width=110, height=40)
 
     # Button to trigger the sign-in process
-    b5 = Button(f2, text="Sign In", command=SigninRegistration)
+    b5 = Button(f2, text="Register", command=SigninRegistration)
     b5.place(x=175, y=220, width=100, height=30)
+    
+    u26 = Label(f2, text=" ", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    u26 = Label(f2, text="", fg="white", bg="blue")
+    u26.place(x=90, y=450)
+
+    
+    def set_message(message, color="red"):
+        u26.config(text=message, fg=color)
+        
+    global global_function
+    global_function = set_message
 
 
 def SigninRegistration():
     try:
         rd = d.get()
-        try:
-            re = x.get()
+        re = x.get()         
+        rf = f.get()
+        rf = int(rf)
+        rf = str(rf)
+
+        def insert_data(email, password, PhoneNumber):
             try:
-                rf = f.get()
+                # Connect to the SQLite database
+                connection = sqlite3.connect('bank.db')
+                cursor = connection.cursor()
 
-                def insert_data(email, password, PhoneNumber):
-                    try:
-                        # Connect to the SQLite database
-                        connection = sqlite3.connect('bank.db')
-                        cursor = connection.cursor()
+                # Insert data into the 'Login' table
+                insert_query = f"INSERT INTO Login (Email, pass, Phone) VALUES ('{email}', '{password}', {PhoneNumber})"
+                cursor.execute(insert_query)
 
-                        # Insert data into the 'Login' table
-                        insert_query = f"INSERT INTO Login (Email, pass, Phone) VALUES ('{email}', '{password}', {PhoneNumber})"
-                        cursor.execute(insert_query)
+                # Commit the changes
+                connection.commit()
+                print("Data inserted successfully")
+                global_function("Success  (•_•)", color='white')
+                cursor.close()
+                connection.close()
 
-                        # Commit the changes
-                        connection.commit()
-                        print("Data inserted successfully")
-                        cursor.close()
-                        connection.close()
+            except Exception as l:
+                print(f"Error: {l}")
+                global_function("Error : {}".format(l), color='red')
+            finally:
+                # Close the cursor and connection
+                # cursor.close()
+                # connection.close()
+                pass
 
-                    except Exception as l:
-                        print(f"Error: {l}")
-                    finally:
-                        pass
+                # Example usage:
 
-                    email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-                    phone_pattern = r"^(\+\d{1,2})?(\d{10})$|^(\d{3}-\d{3}-\d{4})$"
+    
+        email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        phone_pattern = r'^(\+91-?)?([6-9]\d{9})$'
 
-                    ma = match(email_pattern, rd)
-                    matchp = match(phone_pattern, rf)
+        ma = match(email_pattern, rd)
+        matchp = match(phone_pattern, rf)
+
                     
-                    k = bool(ma)
-                    r = bool(matchp)
-                    if k:
-                          if r:
-                                insert_data(rd, re, rf)
-                          else:
-                                print("enter valid phone number!")
-                    else:
-                          print("invalid Email!")
-                
-            except Exception as e:
-                print(f"Enter valid phone Number! {e}")
-        except Exception as e:
-            print("enter valid password only! ")
-    except Exception as e:
-        print("Wrong Email!!!")
-
+        k = bool(ma)
+        r = bool(matchp)
+        if k:
+            if r:
+                insert_data(rd, re, rf)
+            else:
+                print("enter valid phone number!")
+                global_function("enter valid phone number!", color='red')
+        else:
+              print("invalid Email!")
+              global_function("invalid Email!", color='red')
+                          
+        
+    except:
+        print("Something is wrong!!!")
+        global_function("Something is Wrong!!!", color='red')   
 
 # calling home function
 if __name__ == "__main__":
